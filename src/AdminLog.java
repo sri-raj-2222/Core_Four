@@ -1,14 +1,26 @@
 import java.awt.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+import java.awt.event.*;
+import java.sql.*;
+import javax.swing.*;
+
 public class AdminLog {
     public static Connection con;
 
     AdminLog(){
+
+         try {
+        //DB connection
+        String dbURL="jdbc:mysql://localhost:3306/javaproject";
+         String dbUser="root";
+         String dbPassword="root";
+
+         con = DriverManager.getConnection(dbURL,dbUser,dbPassword);
+         System.out.println("Connected Successfully");
+             
+         } catch (Exception e) { 
+            e.printStackTrace();
+         }
+
         //frame
          JFrame frame=new JFrame("User Things");
          frame.setSize(600,500);
@@ -50,27 +62,24 @@ public class AdminLog {
          frame.add(Adminpass);
 
          //buttons
-         JButton signUp=new JButton("SignUp");
-         signUp.setBounds(180,330,130,30);
-         frame.add(signUp);
-
          JButton login=new JButton("LogIn");
          login.setBounds(380,330,130,30);
          frame.add(login);
-
+     
+        //back button
+        JButton back=new JButton("<--");
+        back.setBounds(10,10,50,20);
+        frame.add(back);
          
-
+        back.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                new homePage();
+            }
+        });
 
          frame.setVisible(true);
     }
     public static void main(String[] args) throws Exception{
-        //DB connection
-        String dbURL="jdbc:mysql://localhost:3306/javaproject";
-         String dbUser="root";
-         String dbPassword="root";
-
-         con = DriverManager.getConnection(dbURL,dbUser,dbPassword);
-         System.out.println("Connected Successfully");
 
          new AdminLog();
 

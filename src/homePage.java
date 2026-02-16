@@ -5,14 +5,21 @@ import javax.swing.*;
 
 public class homePage {
      public static Connection con;
-     public static void main(String[] args) throws Exception{
-        //DB connection
+
+    public homePage() {
+
+      try {
+         //DB connection
         String dbURL="jdbc:mysql://localhost:3306/javaproject";
          String dbUser="root";
          String dbPassword="root";
 
          con = DriverManager.getConnection(dbURL,dbUser,dbPassword);
          System.out.println("Connected Successfully");
+
+    } catch (Exception e) {
+       e.printStackTrace();
+    }
 
          //frame
          JFrame frame=new JFrame("User Things");
@@ -22,7 +29,7 @@ public class homePage {
          frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
         //  frame.setVisible(true);
 
-         Font font=new Font("Arial",Font.BOLD,18);
+         Font font=new Font("Arial",Font.BOLD,20);
 
          //labels
          JLabel role=new JLabel("Select you Role");
@@ -59,7 +66,10 @@ public class homePage {
                }
          });
 
-
          frame.setVisible(true);
+    } 
+     public static void main(String[] args) throws Exception{
+        
+          new homePage();
      }
 }

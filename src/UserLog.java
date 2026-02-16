@@ -1,11 +1,26 @@
 import java.awt.*;
+import java.awt.event.*;
 import java.sql.*;
 import javax.swing.*;
+
 public class UserLog {
      public static Connection con;
 
      UserLog(){
-           //frame
+
+          try {
+         //DB connection
+        String dbURL="jdbc:mysql://localhost:3306/javaproject";
+         String dbUser="root";
+         String dbPassword="root";
+
+         con = DriverManager.getConnection(dbURL,dbUser,dbPassword);
+         System.out.println("Connected Successfully");
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+
+         //frame
          JFrame frame=new JFrame("User Things");
          frame.setSize(600,500);
          frame.setLayout(null);
@@ -33,7 +48,6 @@ public class UserLog {
          UserPass.setFont(font);
          frame.add(UserPass);
 
-
          //TextFeilds
          //Admin
          JTextField Userid=new JTextField();
@@ -48,28 +62,44 @@ public class UserLog {
          //buttons
          JButton signUp=new JButton("SignUp");
          signUp.setBounds(180,330,130,30);
-         signUp.setBackground(Color.blue);
-         signUp.setForeground(Color.white);
+        //  signUp.setBackground(Color.blue);
+        //  signUp.setForeground(Color.white);
          frame.add(signUp);
 
          JButton login=new JButton("LogIn");
          login.setBounds(380,330,130,30);
-         login.setBackground(Color.blue);
-         login.setForeground(Color.white);
+        //  login.setBackground(Color.blue);
+        //  login.setForeground(Color.white);
          frame.add(login);
+
+         //back button
+        JButton back=new JButton("<--");
+        back.setBounds(10,10,50,20);
+        frame.add(back);
+
+          login.addActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent e){
+              new UserDash(); 
+          }
+        });
+   
+       signUp.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e){
+              new UserReg();
+        }
+       });
+
+       back.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                new homePage();
+            }
+        });
 
          frame.setVisible(true);
      }
      public static void main(String[] args) throws Exception{
-          //DB connection
-        String dbURL="jdbc:mysql://localhost:3306/javaproject";
-         String dbUser="root";
-         String dbPassword="root";
-
-         con = DriverManager.getConnection(dbURL,dbUser,dbPassword);
-         System.out.println("Connected Successfully");
-
         new UserLog();
+        
 
      }
 }

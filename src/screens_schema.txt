@@ -1,0 +1,4 @@
+Field	Type	Null	Key	Default	Extra
+id	int	NO	PRI	NULL	auto_increment
+screen_number	varchar(10)	NO	UNI	NULL	
+capacity	int	NO		NULL	

@@ -1,0 +1,6 @@
+Field	Type	Null	Key	Default	Extra
+theater_id	int	NO	PRI	NULL	auto_increment
+name	varchar(100)	YES		NULL	
+location	varchar(100)	YES		NULL	
+num_screens	int	YES		1	
+capacity	int	YES		0	

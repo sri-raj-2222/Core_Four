@@ -1,0 +1,6 @@
+Field	Type	Null	Key	Default	Extra
+show_id	int	NO	PRI	NULL	auto_increment
+movie_ID	int	YES	MUL	NULL	
+theater_id	int	YES	MUL	NULL	
+show_time	datetime	NO		NULL	
+price	decimal(10,2)	YES		NULL	

@@ -3,7 +3,7 @@ public class jdbcConnection {
     
     public static void main(String[] args) throws Exception {
         // Class.forName("com.mysql.cj.jdbc.Driver");
-        String url = "jdbc:mysql://localhost:3306/jdbcdb";
+        String url = "jdbc:mysql://localhost:3306/movies_booking";
         String user = "root";
         String password = "root";
 

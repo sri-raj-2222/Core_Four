@@ -1,100 +1,96 @@
 import java.awt.*;
-import java.awt.event.*;
 import java.sql.*;
 import javax.swing.*;
 
-
 public class UserDash {
     public static Connection con;
-    UserDash(){
+    private JFrame frame;
+    private String userEmail; // Session variable
 
-      try {
-        //DB connection
-        String dbURL="jdbc:mysql://localhost:3306/javaproject";
-        String dbUser="root";
-        String dbPassword="root";
+    public UserDash(String email) {
+        this.userEmail = email;
 
-         con = DriverManager.getConnection(dbURL,dbUser,dbPassword);
-         System.out.println("Connected Successfully");
+        try {
+            // DB connection
+            String dbURL = "jdbc:mysql://localhost:3306/movies_booking";
+            String dbUser = "root";
+            String dbPassword = "root";
+            con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
-       //Frame
-       JFrame frame=new JFrame("User Dashboard");
-       frame.setSize(600, 500);
-       frame.setLayout(null);
-       frame.setResizable(false);
-       frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
-       //    frame.setVisible(true);
+        // 1. Frame Setup
+        frame = new JFrame("User Dashboard");
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new GridBagLayout());
+        ThemeUI.styleFrame(frame);
 
-       Font font=new Font("Arial",Font.BOLD,20);
+        // 2. Main Dashboard Panel
+        JPanel dashPanel = new JPanel();
+        dashPanel.setLayout(null);
+        dashPanel.setPreferredSize(new Dimension(600, 500));
+        ThemeUI.stylePanel(dashPanel);
 
-       //buttons
-       JButton Movies=new JButton("Movies");
-       Movies.setBounds(200,100,200,30);
-       Movies.setFont(font);
-       frame.add(Movies);
+        JLabel header = new JLabel("Welcome to User Dashboard", SwingConstants.CENTER);
+        header.setBounds(100, 30, 400, 40);
+        ThemeUI.styleHeading(header);
+        dashPanel.add(header);
 
-       //Bookings
-       JButton Bookings=new JButton("Bookings");
-       Bookings.setBounds(200,180,200,30);
-       Bookings.setFont(font);
-       frame.add(Bookings);
+        // 3. All 4 Menu Buttons
+        JButton Movies = new JButton("Browse Movies");
+        Movies.setBounds(175, 120, 250, 40);
+        ThemeUI.styleButton(Movies);
+        dashPanel.add(Movies);
 
-       //Profile
-       JButton Profile=new JButton("Profile");
-       Profile.setBounds(200,260,200,30);
-       Profile.setFont(font);
-       frame.add(Profile);
+        JButton Bookings = new JButton("My Bookings");
+        Bookings.setBounds(175, 190, 250, 40);
+        ThemeUI.styleButton(Bookings);
+        dashPanel.add(Bookings);
 
-       //logout
-       JButton Logout=new JButton("LogOut");
-       Logout.setBounds(200,340,200,30);
-       Logout.setFont(font);
-       frame.add(Logout);
+        JButton Profile = new JButton("My Profile");
+        Profile.setBounds(175, 260, 250, 40);
+        ThemeUI.styleButton(Profile);
+        dashPanel.add(Profile);
 
-        //back button
-        JButton back=new JButton("<--");
-        back.setBounds(10,10,50,20);
-        frame.add(back);
+        JButton Logout = new JButton("LogOut");
+        Logout.setBounds(175, 330, 250, 40);
+        ThemeUI.styleDangerButton(Logout);
+        dashPanel.add(Logout);
 
-        back.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e){
-                new UserLog();
-            }
+        JButton back = new JButton("←");
+        back.setBounds(10, 10, 60, 30);
+        ThemeUI.styleDangerButton(back);
+        dashPanel.add(back);
+
+        // 4. Action Listeners with Session Routing
+        back.addActionListener(e -> {
+            frame.dispose();
+            // Optional: Redirect back if needed
         });
 
-        Movies.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e){
-            new UserMovies();
-          }
+        Movies.addActionListener(e -> {
+            frame.dispose();
+            new UserMovies(userEmail);
         });
 
-        Bookings.addActionListener(new ActionListener() {
-         public void actionPerformed(ActionEvent e){
-            new UserBookings();
-         }
+        Bookings.addActionListener(e -> {
+            frame.dispose();
+            new UserBookings(userEmail);
         });
 
-        Profile.addActionListener(new ActionListener() {
-         public void actionPerformed(ActionEvent e){
-            new UserProfile();
-         }
+        Profile.addActionListener(e -> {
+            frame.dispose();
+            new UserProfile(userEmail);
         });
 
-        Logout.addActionListener(new ActionListener() {
-         public void actionPerformed(ActionEvent e){
+        Logout.addActionListener(e -> {
+            frame.dispose();
             new homePage();
-         }
         });
 
-       frame.setVisible(true);
-
-    }
-    public static void main(String[] args) throws  Exception{
-
-         new UserDash();
-
+        frame.add(dashPanel, new GridBagConstraints());
+        frame.setVisible(true);
     }
 }

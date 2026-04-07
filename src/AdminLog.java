@@ -5,83 +5,140 @@ import javax.swing.*;
 
 public class AdminLog {
     public static Connection con;
+    private JFrame frame;
 
-    AdminLog(){
+    AdminLog() {
+        try {
+            // DB connection
+            String dbURL = "jdbc:mysql://localhost:3306/movies_booking";
+            String dbUser = "root";
+            String dbPassword = "root";
 
-         try {
-        //DB connection
-        String dbURL="jdbc:mysql://localhost:3306/javaproject";
-         String dbUser="root";
-         String dbPassword="root";
+            con = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+            System.out.println("Connected Successfully");
 
-         con = DriverManager.getConnection(dbURL,dbUser,dbPassword);
-         System.out.println("Connected Successfully");
-             
-         } catch (Exception e) { 
+        } catch (Exception e) {
             e.printStackTrace();
-         }
+        }
 
-        //frame
-         JFrame frame=new JFrame("User Things");
-         frame.setSize(600,500);
-         frame.setLayout(null);
-         frame.setResizable(false);
-         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
-        //  frame.setVisible(true);
+        // 1. Frame Setup for Full Screen
+        frame = new JFrame("Admin Access");
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // Full screen
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-          Font font=new Font("Arial",Font.BOLD,20);
+        // Use GridBagLayout to center the inner content
+        frame.setLayout(new GridBagLayout());
+        ThemeUI.styleFrame(frame);
 
-         //labels
-         JLabel Admin=new JLabel("Admin Login");
-         Admin.setBounds(250,100,250,30);
-         Admin.setFont(font);
-         frame.add(Admin);
+        // 2. Main Admin Panel (The "Form Box")
+        JPanel adminPanel = new JPanel();
+        adminPanel.setLayout(null); // Absolute positioning inside the box
+        adminPanel.setPreferredSize(new Dimension(600, 500));
+        ThemeUI.stylePanel(adminPanel);
 
-         //AdminId
-         JLabel AdminID=new JLabel("AdminID: ");
-         AdminID.setBounds(150,180,250,30);
-         AdminID.setFont(font);
-         frame.add(AdminID);
+        // 3. Labels
+        JLabel AdminHeader = new JLabel("Admin Login", SwingConstants.CENTER);
+        AdminHeader.setBounds(175, 60, 250, 40);
+        ThemeUI.styleHeading(AdminHeader);
+        adminPanel.add(AdminHeader);
 
-         //pasword
-         JLabel AdminPass=new JLabel("Password: ");
-         AdminPass.setBounds(150,230,250,30);
-         AdminPass.setFont(font);
-         frame.add(AdminPass);
+        JLabel AdminIDLabel = new JLabel("Admin ID: ");
+        AdminIDLabel.setBounds(100, 180, 150, 30);
+        ThemeUI.styleLabel(AdminIDLabel);
+        adminPanel.add(AdminIDLabel);
 
+        JLabel AdminPassLabel = new JLabel("Password: ");
+        AdminPassLabel.setBounds(100, 230, 150, 30);
+        ThemeUI.styleLabel(AdminPassLabel);
+        adminPanel.add(AdminPassLabel);
 
-         //TextFeilds
-         //Admin
-         JTextField Adminid=new JTextField();
-         Adminid.setBounds(300,180,250,30);
-         frame.add(Adminid);
+        // 4. Input Fields
+        JTextField AdminidField = new JTextField();
+        AdminidField.setBounds(260, 180, 250, 35);
+        ThemeUI.styleTextField(AdminidField);
+        adminPanel.add(AdminidField);
 
-         //Password
-         JTextField Adminpass=new JTextField();
-         Adminpass.setBounds(300,230,250,30);
-         frame.add(Adminpass);
+        // Password masking
+        JPasswordField AdminpassField = new JPasswordField();
+        AdminpassField.setBounds(260, 230, 250, 35);
+        ThemeUI.stylePasswordField(AdminpassField);
+        adminPanel.add(AdminpassField);
 
-         //buttons
-         JButton login=new JButton("LogIn");
-         login.setBounds(380,330,130,30);
-         frame.add(login);
-     
-        //back button
-        JButton back=new JButton("<--");
-        back.setBounds(10,10,50,20);
-        frame.add(back);
-         
+        // 5. Buttons
+        JButton login = new JButton("LogIn");
+        login.setBounds(150, 330, 120, 40);
+        ThemeUI.styleButton(login);
+        adminPanel.add(login);
+
+        JButton reset = new JButton("Clear");
+        reset.setBounds(300, 330, 120, 40);
+        ThemeUI.styleButton(reset);
+        adminPanel.add(reset);
+
+        JButton back = new JButton("←");
+        back.setBounds(10, 10, 60, 30);
+        ThemeUI.styleDangerButton(back);
+        adminPanel.add(back);
+
+        // 6. Add the admin box to the center of the frame
+        frame.add(adminPanel, new GridBagConstraints());
+
+        // --- Action Listeners ---
         back.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
                 new homePage();
             }
         });
 
-         frame.setVisible(true);
+        login.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String aId = AdminidField.getText().trim();
+                String aps = new String(AdminpassField.getPassword()).trim();
+
+                if (aId.isEmpty() || aps.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Required data missing", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (check(aId, aps)) {
+                    frame.dispose();
+                    new AdminDash(aId);
+                    JOptionPane.showMessageDialog(null, "Welcome Admin!");
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Invalid Admin Credentials", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+                AdminidField.setText("");
+                AdminpassField.setText("");
+            }
+        });
+
+        reset.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                AdminidField.setText("");
+                AdminpassField.setText("");
+            }
+        });
+
+        frame.setVisible(true);
     }
-    public static void main(String[] args) throws Exception{
 
-         new AdminLog();
+    public static boolean check(String aId, String aps) {
+        try {
+            String query = "SELECT EMAIL, PASSWORD FROM ADMIN_DATA WHERE EMAIL=? AND PASSWORD=?";
+            PreparedStatement p = con.prepareStatement(query);
+            p.setString(1, aId);
+            p.setString(2, aps);
+            ResultSet rs = p.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
+    public static void main(String[] args) throws Exception {
+        new AdminLog();
     }
 }

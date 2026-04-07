@@ -1,0 +1,7 @@
+Field	Type	Null	Key	Default	Extra
+MOVIE_ID	int	NO	PRI	NULL	auto_increment
+MOVIE_NAME	varchar(100)	NO		NULL	
+MOVIE_DURATION	int	YES		NULL	
+MOVIE_GENRE	varchar(50)	YES		NULL	
+MOVIE_LANGUAGE	varchar(50)	YES		NULL	
+POSTER_PATH	varchar(500)	YES		NULL	
